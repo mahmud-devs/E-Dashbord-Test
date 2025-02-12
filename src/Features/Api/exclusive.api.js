@@ -5,6 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const exclusiveApi = createApi({
     reducerPath: "exclusiveApi",
     baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_DOMAIN_NAME }),
+    tagTypes: ["banner"],
     endpoints: (builder) => ({
         getPokemonByName: builder.query({
             query: (name) => `pokemon/${name}`,
@@ -15,10 +16,15 @@ export const exclusiveApi = createApi({
                 method: "POST",
                 body: data,
             }),
+            invalidatesTags: ["banner"],
+        }),
+        GetBanner: builder.query({
+            query: () => "banner",
+            providesTags: ["banner"],
         }),
     }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useUploadBannerMutation } = exclusiveApi;
+export const { useUploadBannerMutation, useGetBannerQuery } = exclusiveApi;

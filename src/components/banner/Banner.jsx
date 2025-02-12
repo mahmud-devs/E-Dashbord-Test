@@ -11,6 +11,11 @@ import {
 import { useForm } from "react-hook-form";
 import React from "react";
 const TABLE_HEAD = ["Title", "Banner", "Date", "Actions"];
+import {
+    useGetBannerQuery,
+    useUploadBannerMutation,
+} from "../../Features/Api/exclusive.api";
+import moment from "moment-timezone";
 const Banner = () => {
     const [open, setOpen] = React.useState(false);
 
@@ -71,23 +76,50 @@ const Banner = () => {
         register,
         handleSubmit,
         watch,
+        reset,
         formState: { errors },
     } = useForm();
+
+    // ======================= upload banner ============================
+
+    const [UploadBanner] = useUploadBannerMutation();
+
+    const hamdleBannerSubmut = async (data) => {
+        try {
+            const formData = new FormData();
+            formData.append("image", data?.image[0]);
+            formData.append("name", data?.name);
+
+            const responce = await UploadBanner(formData);
+            console.log(responce);
+        } catch (error) {
+            console.log("error from handlebanner submit", error);
+        } finally {
+            reset();
+        }
+    };
+
+    // ========================== get banner data ====================
+
+    const { data } = useGetBannerQuery();
+    console.log(data?.data);
 
     return (
         <div className="flex flex-col gap-y-5">
             <form
                 className="flex flex-col gap-y-5"
-                onSubmit={handleSubmit(onsubmit)}
+                onSubmit={handleSubmit(hamdleBannerSubmut)}
             >
                 <Input
                     size="md"
                     label="Banner Title"
                     color="black"
                     defaultValue=""
-                    {...register("title", { required: true })}
+                    {...register("name", { required: true })}
                 />
-                {errors.title && <span>This field is required</span>}
+                {errors.name && (
+                    <span className="text-red-500">This field is required</span>
+                )}
 
                 <div class="flex items-center justify-center w-full">
                     <label
@@ -120,7 +152,17 @@ const Banner = () => {
                                 SVG, PNG, JPG or GIF (MAX. 800x400px)
                             </p>
                         </div>
-                        <input id="dropzone-file" type="file" class="hidden" />
+                        <input
+                            id="dropzone-file"
+                            type="file"
+                            class="hidden"
+                            {...register("image", { required: true })}
+                        />
+                        {errors.image && (
+                            <span className="text-red-500">
+                                Image is required
+                            </span>
+                        )}
                     </label>
                 </div>
 
@@ -156,23 +198,34 @@ const Banner = () => {
                             ))}
                         </tr>
                     </thead>
+
                     <tbody>
-                        {TABLE_ROWS.map(({ name, job, date }, index) => {
-                            const isLast = index === TABLE_ROWS.length - 1;
+                        {data?.data.map((item, index) => {
+                            const isLast = index === data?.data.length - 1;
                             const classes = isLast
                                 ? "p-4"
                                 : "p-4 border-b border-blue-gray-50 text-center";
-
                             return (
-                                <tr key={name}>
-                                    <td className={classes}>
+                                <tr key={item._id}>
+                                    <td>
                                         <Typography
                                             variant="small"
                                             color="blue-gray"
                                             className="font-normal"
                                         >
-                                            {name}
+                                            {item.name}
                                         </Typography>
+                                    </td>
+                                    <td className={classes}>
+                                        <div className="h-[100px] flex justify-center">
+                                            <div className="h-[100px w-[150px]">
+                                                <img
+                                                    src={item.image}
+                                                    className="w-full bg-cover h-full"
+                                                    alt=""
+                                                />
+                                            </div>
+                                        </div>
                                     </td>
                                     <td className={classes}>
                                         <Typography
@@ -180,16 +233,9 @@ const Banner = () => {
                                             color="blue-gray"
                                             className="font-normal"
                                         >
-                                            {job}
-                                        </Typography>
-                                    </td>
-                                    <td className={classes}>
-                                        <Typography
-                                            variant="small"
-                                            color="blue-gray"
-                                            className="font-normal"
-                                        >
-                                            {date}
+                                            {moment(item?.updatedAt)
+                                                .tz("Asia/Dhaka")
+                                                .format("D/M/YYYY hh:mm A ")}
                                         </Typography>
                                     </td>
                                     <td className={classes}>
