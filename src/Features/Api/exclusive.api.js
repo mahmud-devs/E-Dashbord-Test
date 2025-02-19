@@ -22,9 +22,21 @@ export const exclusiveApi = createApi({
             query: () => "banner",
             providesTags: ["banner"],
         }),
+        UpdateBanner: builder.mutation({
+            query: ({data,id}) => ({
+                url: `banner/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: ["banner"],
+        }),
     }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useUploadBannerMutation, useGetBannerQuery } = exclusiveApi;
+export const {
+    useUploadBannerMutation,
+    useGetBannerQuery,
+    useUpdateBannerMutation,
+} = exclusiveApi;
