@@ -327,7 +327,7 @@ const Banner = () => {
                                 className="w-full h-full object-cover"
                             />
 
-                            {/* ================================================================ */}
+                            {/* ==================================================== */}
 
                             <div class="flex items-center justify-center w-full h-full absolute left-0 top-0  transition-opacity duration-300 opacity-0 group-hover:opacity-80">
                                 <label
