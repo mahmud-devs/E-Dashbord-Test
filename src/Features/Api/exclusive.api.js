@@ -42,6 +42,17 @@ export const exclusiveApi = createApi({
             query: () => "category",
             providesTags: ["category"],
         }),
+        UpdateCategory: builder.mutation({
+            query: (data) => ({
+                url: `category/${data.id}`,
+                method: "put",
+                body: {
+                    name: data.name,
+                    description: data.description,
+                },
+            }),
+            invalidatesTags: ["category"],
+        }),
     }),
 });
 
@@ -52,5 +63,6 @@ export const {
     useGetBannerQuery,
     useUpdateBannerMutation,
     useUploadCategoryMutation,
-    useGetCategoryQuery
+    useGetCategoryQuery,
+    useUpdateCategoryMutation,
 } = exclusiveApi;

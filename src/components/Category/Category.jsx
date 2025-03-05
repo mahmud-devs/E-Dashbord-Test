@@ -13,35 +13,52 @@ import {
 import { useForm } from "react-hook-form";
 import {
     useGetCategoryQuery,
+    useUpdateCategoryMutation,
     useUploadCategoryMutation,
 } from "../../Features/Api/exclusive.api";
 const Category = () => {
     const [tempCategoryData, settempCategoryData] = useState({});
     const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
+        register: registerUpload,
+        handleSubmit: handleSubmitUpload,
+        reset: resetUpload,
+        formState: { errors: errorsUpload },
+    } = useForm();
+
+    const {
+        register: registerUpdate,
+        handleSubmit: handleSubmitUpdate,
+        reset: resetUpdate,
+        setValue,
+        formState: { errors: errorsUpdate },
     } = useForm();
 
     const [UploadCategory] = useUploadCategoryMutation();
     const { data, isLoading, isError } = useGetCategoryQuery();
-
+    const [UpdateCategory] = useUpdateCategoryMutation();
     const [open, setOpen] = React.useState(false);
     const TABLE_HEAD = ["Name", "Description", "Product", "Actions"];
 
     const handleOpen = (item) => {
         settempCategoryData(item);
+
+        // ✅ Set form values explicitly to ensure the update fields reflect the selected category
+        if (item) {
+            setValue("name", item.name);
+            setValue("description", item.description);
+        }
+
         setOpen((prev) => !prev);
     };
 
     console.log(tempCategoryData);
+
     // ===================== handle category upload function ========================
     const handleCategory = async (data) => {
         try {
             const response = await UploadCategory({
                 name: data.name,
-                description: data.Descrioption,
+                description: data.description,
             });
             console.log(response?.data);
 
@@ -51,7 +68,30 @@ const Category = () => {
         } catch (error) {
             console.log("Error from upload category:", error);
         } finally {
-            reset();
+            resetUpload();
+        }
+    };
+
+    // ========================= handle update category =================
+    const handleUpdateCategory = async (data) => {
+        try {
+            console.log(data);
+
+            const response = await UpdateCategory({
+                name: data.name,
+                description: data.description,
+                id: tempCategoryData._id,
+            });
+            console.log(response?.data);
+
+            // if (response?.data?.data) {
+            //     successToast("Category Upload Successfully");
+            // }
+        } catch (error) {
+            console.log("Error from update category:", error);
+        } finally {
+            resetUpdate();
+            setOpen((prev) => !prev);
         }
     };
     return (
@@ -59,16 +99,19 @@ const Category = () => {
             <form
                 id="mainForm"
                 className="flex flex-col gap-y-5"
-                onSubmit={handleSubmit(handleCategory)}
+                onSubmit={handleSubmitUpload(handleCategory)}
             >
                 <Input
                     size="md"
                     label="Name"
                     color="black"
-                    {...register("name", { required: true, maxLength: 20 })}
+                    {...registerUpload("name", {
+                        required: true,
+                        maxLength: 20,
+                    })}
                 />
 
-                {errors.name && (
+                {errorsUpload.name && (
                     <span className="text-red-500">
                         The title can olny be 20 character.
                     </span>
@@ -76,9 +119,9 @@ const Category = () => {
                 <Textarea
                     color="gray"
                     label="Descrioption"
-                    {...register("Descrioption", { required: true })}
+                    {...registerUpload("Descrioption", { required: true })}
                 />
-                {errors.Descrioption && (
+                {errorsUpload.Descrioption && (
                     <span className="text-red-500">
                         Please fill the Descrioption .
                     </span>
@@ -202,37 +245,59 @@ const Category = () => {
                 }}
             >
                 <DialogBody className="flex flex-col gap-y-5 p-10">
-                    <form className="flex flex-col gap-y-5 p-10">
+                    <form
+                        className="flex flex-col gap-y-5 "
+                        onSubmit={handleSubmitUpdate(handleUpdateCategory)}
+                        id="updateForm"
+                    >
                         <Input
                             size="md"
-                            label=" Name"
+                            label="name"
                             color="black"
-                            defaultValue={tempCategoryData?.name}
+                            // defaultValue={tempCategoryData.name}
+                            {...registerUpdate("name", {
+                                required: true,
+                                maxLength: 20,
+                            })}
                         />
+                        {errorsUpdate.name && (
+                            <span className="text-red-500">
+                                The title can olny be 20 character.
+                            </span>
+                        )}
                         <Textarea
                             color="gray"
                             label="Descrioption"
-                            defaultValue={tempCategoryData?.description}
+                            {...registerUpdate("description", {
+                                required: true,
+                            })}
+                            // defaultValue={tempCategoryData.description}
                         />
+                        {errorsUpdate.description && (
+                            <span className="text-red-500">
+                                Please fill the description .
+                            </span>
+                        )}
+                        <DialogFooter>
+                            <Button
+                                variant="text"
+                                color="red"
+                                onClick={() => setOpen(false)}
+                                className="mr-1"
+                            >
+                                <span>Cancel</span>
+                            </Button>
+                            <Button
+                                variant="gradient"
+                                color="green"
+                                type="submit"
+                                form="updateForm"
+                            >
+                                <span>update</span>
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </DialogBody>
-                <DialogFooter>
-                    <Button
-                        variant="text"
-                        color="red"
-                        onClick={handleOpen}
-                        className="mr-1"
-                    >
-                        <span>Cancel</span>
-                    </Button>
-                    <Button
-                        variant="gradient"
-                        color="green"
-                        onClick={handleOpen}
-                    >
-                        <span>update</span>
-                    </Button>
-                </DialogFooter>
             </Dialog>
         </div>
     );
