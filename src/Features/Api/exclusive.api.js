@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const exclusiveApi = createApi({
     reducerPath: "exclusiveApi",
     baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_DOMAIN_NAME }),
-    tagTypes: ["banner"],
+    tagTypes: ["banner", "category"],
     endpoints: (builder) => ({
         getPokemonByName: builder.query({
             query: (name) => `pokemon/${name}`,
@@ -38,6 +38,10 @@ export const exclusiveApi = createApi({
             }),
             invalidatesTags: ["category"],
         }),
+        GetCategory: builder.query({
+            query: () => "category",
+            providesTags: ["category"],
+        }),
     }),
 });
 
@@ -48,4 +52,5 @@ export const {
     useGetBannerQuery,
     useUpdateBannerMutation,
     useUploadCategoryMutation,
+    useGetCategoryQuery
 } = exclusiveApi;
