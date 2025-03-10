@@ -72,7 +72,7 @@ const Category = () => {
         }
     };
 
-    // ========================= handle update category =================
+    // ========================= handle update category ==============================
     const handleUpdateCategory = async (data) => {
         try {
             console.log(data);
