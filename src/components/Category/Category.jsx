@@ -53,7 +53,7 @@ const Category = () => {
 
     console.log(tempCategoryData);
 
-    // ===================== handle category upload function ========================
+    // ===================== handle category upload function ============================
     const handleCategory = async (data) => {
         try {
             const response = await UploadCategory({
