@@ -42,7 +42,7 @@ const Category = () => {
     const handleOpen = (item) => {
         settempCategoryData(item);
 
-        // ======= Set form values explicitly to ensure the update fields reflect the selected category
+        // ========== Set form values explicitly to ensure the update fields reflect the selected category
         if (item) {
             setValue("name", item.name);
             setValue("description", item.description);
