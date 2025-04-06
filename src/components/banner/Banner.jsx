@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 const TABLE_HEAD = ["Title", "Banner", "Date", "Actions"];
 import {
+    useDeleteBannerMutation,
     useGetBannerQuery,
     useUpdateBannerMutation,
     useUploadBannerMutation,
@@ -126,6 +127,24 @@ const Banner = () => {
 
         // console.log("ohhh", e.target);
     };
+
+    // ======================= delete banner ===================
+
+    const [DeleteBanner] = useDeleteBannerMutation();
+
+    const handleDeleteBanner = async (id) => {
+        try {
+            const responce = await DeleteBanner(id);
+
+            if (responce?.data?.data) {
+                console.log("banner deleted successfully", responce);
+            }
+            console.log(responce);
+        } catch (error) {
+            console.log("error from handleDeleteBanner", error);
+        }
+    };
+
     return (
         <div className="flex flex-col gap-y-5">
             <form
@@ -265,7 +284,12 @@ const Banner = () => {
                                         </td>
                                         <td className={classes}>
                                             <div className="flex items-center gap-x-3 justify-center">
-                                                <Button color="red">
+                                                <Button
+                                                    onClick={() =>
+                                                        handleDeleteBanner(_id)
+                                                    }
+                                                    color="red"
+                                                >
                                                     Delete
                                                 </Button>
                                                 <Button

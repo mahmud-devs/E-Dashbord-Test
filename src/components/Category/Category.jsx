@@ -12,6 +12,7 @@ import {
 } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
 import {
+    useDeleteCategoryMutation,
     useGetCategoryQuery,
     useUpdateCategoryMutation,
     useUploadCategoryMutation,
@@ -92,6 +93,24 @@ const Category = () => {
         } finally {
             resetUpdate();
             setOpen((prev) => !prev);
+        }
+    };
+
+    // =========================== delete category ============================
+
+    const [DeleteCategory] = useDeleteCategoryMutation();
+
+    const handleDeleteCategory = async (id) => {
+        try {
+            console.log(id);
+
+            const responce = await DeleteCategory(id);
+            if (responce?.data?.data) {
+                console.log("category deleted successfully", responce);
+            }
+            console.log(responce);
+        } catch (error) {
+            console.log("error from handleDeleteCategory", error);
         }
     };
     return (
@@ -210,7 +229,14 @@ const Category = () => {
                                             </td>
                                             <td className={classes}>
                                                 <div className="flex items-center gap-x-3 justify-center">
-                                                    <Button color="red">
+                                                    <Button
+                                                        onClick={() =>
+                                                            handleDeleteCategory(
+                                                                _id
+                                                            )
+                                                        }
+                                                        color="red"
+                                                    >
                                                         Delete
                                                     </Button>
                                                     <Button

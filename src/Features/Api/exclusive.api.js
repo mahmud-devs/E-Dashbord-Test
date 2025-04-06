@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const exclusiveApi = createApi({
     reducerPath: "exclusiveApi",
     baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_DOMAIN_NAME }),
-    tagTypes: ["banner", "category"],
+    tagTypes: ["banner", "category", "subcategory"],
     endpoints: (builder) => ({
         getPokemonByName: builder.query({
             query: (name) => `pokemon/${name}`,
@@ -30,6 +30,13 @@ export const exclusiveApi = createApi({
             }),
             invalidatesTags: ["banner"],
         }),
+        DeleteBanner: builder.mutation({
+            query: (id) => ({
+                url: `banner/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["banner"],
+        }),
         UploadCategory: builder.mutation({
             query: (data) => ({
                 url: `category`,
@@ -40,6 +47,10 @@ export const exclusiveApi = createApi({
         }),
         GetCategory: builder.query({
             query: () => "category",
+            providesTags: ["category"],
+        }),
+        GetSingleCategory: builder.query({
+            query: (id) => `category/${id}`,
             providesTags: ["category"],
         }),
         UpdateCategory: builder.mutation({
@@ -53,6 +64,33 @@ export const exclusiveApi = createApi({
             }),
             invalidatesTags: ["category"],
         }),
+        DeleteCategory: builder.mutation({
+            query: (id) => ({
+                url: `category/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["category"],
+        }),
+        UploadSubcatgory: builder.mutation({
+            query: (data) => ({
+                url: `subcategory`,
+                method: "post",
+                body: data,
+            }),
+            invalidatesTags: ["subcategory"],
+        }),
+        GetallSubCategory: builder.query({
+            query: (id) => `subcategory`,
+            providesTags: ["subcategory"],
+        }),
+        UpdateSubCategory: builder.mutation({
+            query: ({ data, id }) => ({
+                url: `subcategory/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: ["subcategory"],
+        }),
     }),
 });
 
@@ -65,4 +103,10 @@ export const {
     useUploadCategoryMutation,
     useGetCategoryQuery,
     useUpdateCategoryMutation,
+    useDeleteBannerMutation,
+    useDeleteCategoryMutation,
+    useUploadSubcatgoryMutation,
+    useGetallSubCategoryQuery,
+    useUpdateSubCategoryMutation,
+    useGetSingleCategoryQuery,
 } = exclusiveApi;
