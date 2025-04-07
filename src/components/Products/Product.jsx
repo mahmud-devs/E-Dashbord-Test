@@ -38,7 +38,7 @@ const Product = () => {
         image: "",
     });
 
-    // onchange funtion for every input
+    // ================== all input onchange function
     const handlechange = (e) => {
         const { name, value } = e.target;
         if (
@@ -62,7 +62,7 @@ const Product = () => {
         setproductdata({ ...productdata, subcategory: value });
     };
 
-    // handle quil
+    //================== handle quil function
     const handleQuillChange = (value) => {
         setQuiValue(value);
         setproductdata((prev) => ({
@@ -71,7 +71,8 @@ const Product = () => {
         }));
     };
 
-    // handleImageChange
+    //=================== handleImage function
+
     const handleImageChange = (event) => {
         setproductdata((prev) => ({
             ...prev,
@@ -79,13 +80,9 @@ const Product = () => {
         }));
     };
 
-    
-
-    // handleUpload funtion call
+    //======================= handle Upload funtion
     const handleUpload = async () => {
         try {
-            // const response = await axiosinstance.post("product", productdata);
-
             setloading(true);
             const response = await axios.post(
                 "http://localhost:4000/api/v1/product",

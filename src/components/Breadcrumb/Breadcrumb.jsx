@@ -1,24 +1,43 @@
-import { Breadcrumbs } from "@material-tailwind/react";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Breadcrumbs as PathNavigator } from "@material-tailwind/react";
 
-function BreadcrumbsWithIcon() {
+const PagePath = () => {
+  const location = useLocation();
+
+  const route = location.pathname.split("/").filter((item) => item);
+
+ 
+
   return (
-    <Breadcrumbs>
-      <a href="#" className="opacity-60">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-        </svg>
-      </a>
-      <a href="#" className="opacity-60">
-        <span>Components</span>
-      </a>
-      <a href="#">Breadcrumbs</a>
-    </Breadcrumbs>
-  );
-}
+    <div className="p-4">
+      <PathNavigator>
 
-export default BreadcrumbsWithIcon;
+        {/* Home link */}
+        <Link to="/" className="opacity-60">
+          Home
+        </Link>
+
+        {route.map((item, index) => {
+          
+
+          const path = `/${route.slice(0, index + 1).join("/")}`;
+
+          return (
+            <Link
+              key={index}
+              to={path}
+              className={
+                index === route.length - 1 ? "opacity-100 text-blue-400" : "opacity-80"
+              }
+            >
+              {item.charAt(0).toUpperCase() + item.slice(1)}
+            </Link>
+          );
+        })}
+      </PathNavigator>
+    </div>
+  );
+};
+
+export default PagePath;

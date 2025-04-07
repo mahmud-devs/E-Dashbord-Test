@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import { Outlet } from "react-router-dom";
-import BreadcrumbsWithIcon from "../components/Breadcrumb/Breadcrumb";
+import PagePath from "../components/Breadcrumb/Breadcrumb";
 
 const Home = () => {
   return (
@@ -12,7 +12,7 @@ const Home = () => {
 
       <div className="w-full  p-6">
         <div className="my-5">
-          <BreadcrumbsWithIcon />
+          <PagePath />
         </div>
         <Outlet />
       </div>

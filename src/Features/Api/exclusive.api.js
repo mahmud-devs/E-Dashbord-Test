@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const exclusiveApi = createApi({
     reducerPath: "exclusiveApi",
     baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_DOMAIN_NAME }),
-    tagTypes: ["banner", "category", "subcategory"],
+    tagTypes: ["banner", "category", "subcategory", "product", "bestSelling"],
     endpoints: (builder) => ({
         getPokemonByName: builder.query({
             query: (name) => `pokemon/${name}`,
@@ -80,7 +80,7 @@ export const exclusiveApi = createApi({
             invalidatesTags: ["subcategory"],
         }),
         GetallSubCategory: builder.query({
-            query: (id) => `subcategory`,
+            query: () => `subcategory`,
             providesTags: ["subcategory"],
         }),
         UpdateSubCategory: builder.mutation({
@@ -90,6 +90,21 @@ export const exclusiveApi = createApi({
                 body: data,
             }),
             invalidatesTags: ["subcategory"],
+        }),
+        GetAllProduct: builder.query({
+            query: () => `product`,
+            providesTags: ["product"],
+        }),
+        GetBestSelling: builder.query({
+            query: () => `bestSelling`,
+            providesTags: ["bestSelling"],
+        }),
+        DeleteBestSelling: builder.mutation({
+            query: (id) => ({
+                url: `bestSelling/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["bestSelling"],
         }),
     }),
 });
@@ -109,4 +124,7 @@ export const {
     useGetallSubCategoryQuery,
     useUpdateSubCategoryMutation,
     useGetSingleCategoryQuery,
+    useGetAllProductQuery,
+    useGetBestSellingQuery,
+    useDeleteBestSellingMutation,
 } = exclusiveApi;
