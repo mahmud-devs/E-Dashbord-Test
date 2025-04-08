@@ -1,4 +1,10 @@
-import { Input, Select, Option, Button } from "@material-tailwind/react";
+import {
+    Input,
+    Select,
+    Option,
+    Button,
+    Textarea,
+} from "@material-tailwind/react";
 import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -11,6 +17,7 @@ import {
 
 import { axiosinstance } from "../../Features/Api/AxiosInstance";
 import axios from "axios";
+import { successToast } from "../../Utils/Toast";
 const Product = () => {
     const [value, setValue] = useState("");
 
@@ -83,6 +90,9 @@ const Product = () => {
     //======================= handle Upload funtion
     const handleUpload = async () => {
         try {
+            console.log(productdata);
+
+            
             setloading(true);
             const response = await axios.post(
                 "http://localhost:4000/api/v1/product",
@@ -95,9 +105,9 @@ const Product = () => {
             );
             console.log(response);
 
-            // if (response.data.data) {
-            //     successToast("product upload succesfull");
-            // }
+            if (response?.data?.data) {
+                successToast("product upload succesfull");
+            }
         } catch (error) {
             console.error("error", error);
         } finally {
@@ -138,13 +148,16 @@ const Product = () => {
                     onChange={handlechange}
                 />
                 <div className="mb-10">
-                    <label htmlFor="description" className="mb-3 inline-block">
+                    {/* <label htmlFor="description" className="mb-3 inline-block">
                         Description
-                    </label>
-                    <ReactQuill
-                        theme="snow"
-                        value={quilvalue}
-                        onChange={handleQuillChange}
+                    </label> */}
+                    <Textarea
+                        color="gray"
+                        label="Descrioption"
+                        name="description"
+                        // value={quilvalue}
+                        value={productdata.description}
+                        onChange={handlechange}
                         className="h-[300px]"
                     />
                 </div>

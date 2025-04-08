@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Textarea,
     Input,
@@ -34,6 +34,24 @@ const ProductList = () => {
         "SubCategory",
         "Actions",
     ];
+    // ======================= get bestselling ================
+    const [bestDataId, setbestDataId] = useState([]);
+
+    const {
+        data: bestData,
+        isLoading: bestLoading,
+        isError: bestError,
+    } = useGetBestSellingQuery();
+    // console.log(bestData);
+
+    useEffect(() => {
+        if (bestData?.data) {
+            const ids = bestData.data.map((item) => item.product._id); // Extracting all _id values
+            setbestDataId(ids);
+        }
+    }, [bestData]);
+
+    console.log(bestDataId);
 
     // ================ get product ==================
 
@@ -81,15 +99,6 @@ const ProductList = () => {
             console.log("error from product handleBestSelling", error);
         }
     };
-
-    // ======================= get bestselling ================
-
-    // const {
-    //     data: bestData,
-    //     isLoading: bestLoading,
-    //     isError: bestError,
-    // } = useGetBestSellingQuery();
-    // console.log(bestData);
 
     return (
         <div>
@@ -181,7 +190,7 @@ const ProductList = () => {
                                             <Typography
                                                 variant="small"
                                                 color="blue-gray"
-                                                className="font-normal"
+                                                className="font-normal truncate"
                                             >
                                                 {category.length >= 1
                                                     ? category[0].name
@@ -204,15 +213,32 @@ const ProductList = () => {
                                                 <Button color="red">
                                                     Delete
                                                 </Button>
-                                                
-                                                <Button
+
+                                                {bestDataId.includes(_id) ? (
+                                                    <Button color="red">
+                                                        Best Sellling
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        color="blue"
+                                                        onClick={() =>
+                                                            handleBestSelling(
+                                                                _id
+                                                            )
+                                                        }
+                                                    >
+                                                        Best Sellling
+                                                    </Button>
+                                                )}
+
+                                                {/* <Button
                                                     color="blue"
                                                     onClick={() =>
                                                         handleBestSelling(_id)
                                                     }
                                                 >
                                                     Best Sellling
-                                                </Button>
+                                                </Button> */}
                                                 <Button
                                                     color="green"
                                                     onClick={() =>
