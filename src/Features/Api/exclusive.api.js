@@ -5,7 +5,14 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const exclusiveApi = createApi({
     reducerPath: "exclusiveApi",
     baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_DOMAIN_NAME }),
-    tagTypes: ["banner", "category", "subcategory", "product", "bestSelling"],
+    tagTypes: [
+        "banner",
+        "category",
+        "subcategory",
+        "product",
+        "bestSelling",
+        "order",
+    ],
     endpoints: (builder) => ({
         getPokemonByName: builder.query({
             query: (name) => `pokemon/${name}`,
@@ -106,6 +113,21 @@ export const exclusiveApi = createApi({
             }),
             invalidatesTags: ["bestSelling"],
         }),
+        GetAllOrder: builder.query({
+            query: () => `allOrder`,
+            providesTags: ["order"],
+        }),
+        DeleteOrder: builder.mutation({
+            query: (id) => ({
+                url: `order/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["order"],
+        }),
+        GetSingleOrder: builder.query({
+            query: (id) => `order/${id}`,
+            providesTags: ["order"],
+        }),
     }),
 });
 
@@ -127,4 +149,7 @@ export const {
     useGetAllProductQuery,
     useGetBestSellingQuery,
     useDeleteBestSellingMutation,
+    useGetAllOrderQuery,
+    useDeleteOrderMutation,
+    useGetSingleOrderQuery,
 } = exclusiveApi;
