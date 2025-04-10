@@ -1,18 +1,60 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useGetSingleOrderQuery } from "../../Features/Api/exclusive.api";
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    useGetSingleOrderQuery,
+    useUpdateOrderStatusMutation,
+} from "../../Features/Api/exclusive.api";
 import { calculateDiscount } from "../../Helpers/discountPrice";
+import { Option, Select } from "@material-tailwind/react";
+import { errorToast, successToast } from "../../Utils/Toast";
 
 const SingleOrder = () => {
+    const navigate = useNavigate()
     const { id } = useParams();
-    console.log(id);
+    // console.log(id);
 
     // ================== get single order =====================
 
     const { data } = useGetSingleOrderQuery(id);
-    console.log(data?.data?.order);
+    // console.log(data?.data?.order);
 
-    // ============== discount price ===============
+    // ============== order status ===============
+
+    const [UpdateOrderStatus] = useUpdateOrderStatusMutation();
+
+    const [status, setstatus] = useState([
+        "pending",
+        "cancled",
+        "processing",
+        "deliverd",
+    ]);
+
+    const [finalStatus, setfinalStatus] = useState({
+        status: "",
+    });
+
+    const handleUpdateStatus = async () => {
+        try {
+            const responce = await UpdateOrderStatus({
+                data: finalStatus,
+                id: id,
+            });
+
+            if (responce?.data?.data) {
+                successToast("order status updated successfully");
+            } else {
+                errorToast("failed to update order status");
+            }
+        } catch (error) {
+            console.log("error from order status update", error);
+        } finally {
+            setfinalStatus({
+                status: "",
+            });
+            navigate("/order")
+        }
+    };
+    // console.log(finalStatus);
 
     return (
         <div>
@@ -166,7 +208,7 @@ const SingleOrder = () => {
                             </div>
                             <div class="flex flex-col justify-center px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-50 dark:bg-gray-800 space-y-6">
                                 <h3 class="text-xl dark:text-white font-semibold leading-5 text-gray-800">
-                                    Shipping
+                                    Shipping Status
                                 </h3>
                                 <div class="flex justify-between items-start w-full">
                                     <div class="flex justify-center items-center space-x-4">
@@ -178,13 +220,25 @@ const SingleOrder = () => {
                                             />
                                         </div>
                                         <div class="flex flex-col justify-start items-center">
-                                            <p class="text-lg leading-6 dark:text-white font-semibold text-gray-800">
-                                                DPD Delivery
-                                                <br />
-                                                <span class="font-normal">
-                                                    Delivery with 24 Hours
-                                                </span>
-                                            </p>
+                                            <Select
+                                                label="Select Status"
+                                                onChange={(e) =>
+                                                    setfinalStatus({
+                                                        ...finalStatus,
+                                                        status: e,
+                                                    })
+                                                }
+                                                className="w-full py-2 px-1"
+                                            >
+                                                {status.map((item) => (
+                                                    <Option
+                                                        value={item}
+                                                        className="capitalize"
+                                                    >
+                                                        {item}
+                                                    </Option>
+                                                ))}
+                                            </Select>
                                         </div>
                                     </div>
                                     <p class="text-lg font-semibold leading-6 dark:text-white text-gray-800">
@@ -192,8 +246,11 @@ const SingleOrder = () => {
                                     </p>
                                 </div>
                                 <div class="w-full flex justify-center items-center">
-                                    <button class="hover:bg-black dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-5 w-96 md:w-full bg-gray-800 text-base font-medium leading-4 text-white">
-                                        View Carrier Details
+                                    <button
+                                        onClick={handleUpdateStatus}
+                                        class="hover:bg-black dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-5 w-96 md:w-full bg-gray-800 text-base font-medium leading-4 text-white"
+                                    >
+                                        Confirm Status
                                     </button>
                                 </div>
                             </div>

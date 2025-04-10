@@ -128,6 +128,14 @@ export const exclusiveApi = createApi({
             query: (id) => `order/${id}`,
             providesTags: ["order"],
         }),
+        UpdateOrderStatus: builder.mutation({
+            query: ({ data, id }) => ({
+                url: `order/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: ["order"],
+        }),
     }),
 });
 
@@ -152,4 +160,5 @@ export const {
     useGetAllOrderQuery,
     useDeleteOrderMutation,
     useGetSingleOrderQuery,
+    useUpdateOrderStatusMutation,
 } = exclusiveApi;
